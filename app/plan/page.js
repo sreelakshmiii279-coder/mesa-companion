@@ -4,6 +4,7 @@ import { timeline } from '@/lib/planner';
 import { istDay, istHHMM, addDays, fmtDay, fmtTime } from '@/lib/time';
 import { addTask, deleteTask, moveToTomorrow } from '@/app/actions';
 import Timeline from '@/components/Timeline';
+import PlanTabs from '@/components/PlanTabs';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,8 @@ export default async function Plan({ searchParams }) {
   return (
     <>
       <h1>Plan your day</h1>
-      <p className="sub">Add what you need to do. You'll get a heads-up before each one, plus how much free time you have.</p>
+      <p className="sub">Block time for gym, cooking, deep work. You'll get a heads-up before each one, and a nudge when free time opens up.</p>
+      <PlanTabs active="/plan" />
 
       <form action={addTask} className="card stack">
         <label className="field">What

@@ -18,7 +18,7 @@ export default async function NoteDetail({ params }) {
   if (!rec) notFound();
   return (
     <>
-      <Link href="/notes" className="small muted">← All notes</Link>
+      <Link href="/learn?tab=notes" className="small muted">← Class notes</Link>
       <p className="sub" style={{ margin: '12px 0 0' }}>{rec.course}</p>
       <h1>{rec.title}</h1>
       <p className="sub">
@@ -26,7 +26,7 @@ export default async function NoteDetail({ params }) {
         {' · '}<a href={watchUrl(rec.video_url)} target="_blank" rel="noreferrer">Watch recording ↗</a>
       </p>
       {rec.notes_status === 'done'
-        ? <article className="card notes" dangerouslySetInnerHTML={{ __html: marked.parse(rec.notes_md, { renderer }) }} />
+        ? <article className="card md" dangerouslySetInnerHTML={{ __html: marked.parse(rec.notes_md, { renderer }) }} />
         : <div className="card empty">{rec.notes_status === 'error' ? `Notes failed (${rec.notes_error}). It will retry automatically.` : 'Notes are being written. Check back in a few minutes.'}</div>}
     </>
   );

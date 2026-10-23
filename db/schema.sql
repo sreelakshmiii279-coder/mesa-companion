@@ -76,3 +76,51 @@ CREATE TABLE IF NOT EXISTS meta (
   key   text PRIMARY KEY,
   value text
 );
+
+-- Pre-reads and post-reads from the portal, with a Gemini summary.
+CREATE TABLE IF NOT EXISTS readings (
+  id             text PRIMARY KEY,
+  course         text NOT NULL,
+  kind           text NOT NULL,            -- pre | post
+  title          text NOT NULL,
+  file_name      text,
+  file_type      text,
+  link_url       text,                     -- for link-type materials
+  body           text,                     -- for text-type materials (HTML stripped)
+  summary_md     text,
+  summary_status text NOT NULL DEFAULT 'pending',  -- pending | done | error | skip
+  summary_error  text,
+  attempts       int NOT NULL DEFAULT 0,
+  is_read        boolean NOT NULL DEFAULT false,
+  posted_at      timestamptz,
+  first_seen     timestamptz NOT NULL DEFAULT now()
+);
+
+-- One row per news briefing (a handful of picked stories).
+CREATE TABLE IF NOT EXISTS news (
+  id         serial PRIMARY KEY,
+  items      jsonb NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Vision board. kind: future | identity | goal | image
+CREATE TABLE IF NOT EXISTS vision (
+  id         serial PRIMARY KEY,
+  kind       text NOT NULL,
+  text       text,
+  image_url  text,
+  sort       int NOT NULL DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Household chores / to-dos: the app finds a free slot in your day for each one.
+CREATE TABLE IF NOT EXISTS chores (
+  id          serial PRIMARY KEY,
+  title       text NOT NULL,
+  est_min     int NOT NULL DEFAULT 20,
+  due_day     date,                 -- finish by this IST day (optional)
+  slot_start  timestamptz,          -- when the app scheduled it
+  done        boolean NOT NULL DEFAULT false,
+  moves       int NOT NULL DEFAULT 0,
+  created_at  timestamptz NOT NULL DEFAULT now()
+);

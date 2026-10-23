@@ -4,6 +4,7 @@ import { fmtRelative } from '@/lib/time';
 import { PORTAL_ASSIGNMENTS } from '@/lib/lms';
 import DueList from '@/components/DueList';
 import SyncButton from '@/components/SyncButton';
+import PlanTabs from '@/components/PlanTabs';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +18,7 @@ export default async function Deadlines() {
   return (
     <>
       <h1>Deadlines</h1>
+      <PlanTabs active="/deadlines" />
       <p className="sub">
         Reminders go out 3 days, 1 day, 3 hours and 1 hour before. Tick one off to stop its reminders.
         {lastSync && <> Synced {fmtRelative(new Date(Number(lastSync)))}.</>}

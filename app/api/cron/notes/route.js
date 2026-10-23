@@ -9,8 +9,7 @@ export const maxDuration = 300;
 export async function GET(req) {
   if (!isCron(req)) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   try {
-    const rec = await makeNextNotes();
-    return NextResponse.json({ done: rec ? `${rec.course} / ${rec.title}` : null });
+    return NextResponse.json({ done: await makeNextNotes() });
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }

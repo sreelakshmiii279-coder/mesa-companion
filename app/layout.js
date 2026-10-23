@@ -1,6 +1,9 @@
 import './globals.css';
+import { Geist } from 'next/font/google';
 import { isAuthed } from '@/lib/auth';
 import Shell from '@/components/Shell';
+
+const geist = Geist({ subsets: ['latin'], variable: '--font-geist' });
 
 export const metadata = {
   title: 'Mesa Companion',
@@ -15,15 +18,15 @@ export const viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f6f5f2' },
-    { media: '(prefers-color-scheme: dark)', color: '#141413' },
+    { media: '(prefers-color-scheme: light)', color: '#f7f7f8' },
+    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
   ],
 };
 
 export default async function RootLayout({ children }) {
   const authed = await isAuthed();
   return (
-    <html lang="en">
+    <html lang="en" className={geist.variable}>
       <body>
         {authed
           ? <Shell vapidKey={process.env.VAPID_PUBLIC_KEY}>{children}</Shell>
