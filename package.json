@@ -1,0 +1,24 @@
+{
+  "name": "mesa-companion",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "schema": "node --env-file=.env.local scripts/apply-schema.mjs",
+    "notes": "node --env-file=.env.local scripts/generate-notes.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@google/genai": "^2.31.0",
+    "@neondatabase/serverless": "^1.2.0",
+    "marked": "^18.1.1",
+    "next": "^16.4.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "web-push": "^3.6.7"
+  }
+}
