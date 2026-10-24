@@ -124,3 +124,11 @@ CREATE TABLE IF NOT EXISTS chores (
   moves       int NOT NULL DEFAULT 0,
   created_at  timestamptz NOT NULL DEFAULT now()
 );
+
+-- Type and priority for your own tasks (fixed-time) and chores (auto-slotted).
+ALTER TABLE tasks  ADD COLUMN IF NOT EXISTS category text NOT NULL DEFAULT 'other';
+ALTER TABLE tasks  ADD COLUMN IF NOT EXISTS priority text NOT NULL DEFAULT 'medium';
+ALTER TABLE chores ADD COLUMN IF NOT EXISTS category text NOT NULL DEFAULT 'house';
+ALTER TABLE chores ADD COLUMN IF NOT EXISTS priority text NOT NULL DEFAULT 'medium';
+-- "Later" on an auto-slotted task: don't place it before this time.
+ALTER TABLE chores ADD COLUMN IF NOT EXISTS not_before timestamptz;

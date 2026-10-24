@@ -6,7 +6,7 @@ import Welcome from './Welcome';
 
 const TABS = [
   { href: '/', label: 'Today', match: ['/'], d: 'M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z' },
-  { href: '/plan', label: 'Plan', match: ['/plan', '/chores', '/deadlines'], d: 'M7 3v3m10-3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm4 8 2 2 4-4' },
+  { href: '/plan', label: 'Tasks', match: ['/plan', '/chores', '/deadlines'], d: 'M7 3v3m10-3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm4 8 2 2 4-4' },
   { href: '/learn', label: 'Learn', match: ['/learn', '/notes'], d: 'M12 6.5C10.5 5 8 4.5 4 4.5v14c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2v-14c-4 0-6.5.5-8 2zm0 0V20' },
   { href: '/news', label: 'News', match: ['/news'], d: 'M5 4h11a1 1 0 0 1 1 1v14a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2V5a1 1 0 0 1 1-1zm12 5h2a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2M8 8h5m-5 4h5m-5 4h3' },
 ];

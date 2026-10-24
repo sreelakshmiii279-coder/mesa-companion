@@ -323,3 +323,10 @@ details.edit summary::-webkit-details-marker { display: none; }
 details.edit summary::before { content: '✏️ '; }
 details.edit[open] summary { margin-bottom: 10px; }
 details.edit[open] summary::after { content: ' · close'; color: var(--muted); font-weight: 500; }
+
+/* Priority */
+.pill.p-high { background: rgba(244, 63, 94, 0.15); color: #fb7185; }
+.pill.p-medium { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.pill.p-low { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.card.prio-high { border-color: rgba(244, 63, 94, 0.45); box-shadow: 0 0 0 1px rgba(244, 63, 94, 0.15), 0 10px 30px rgba(244, 63, 94, 0.12); }
+.seg a { cursor: pointer; }

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const TABS = [['/plan', 'Schedule'], ['/chores', 'Chores'], ['/deadlines', 'Deadlines']];
+const TABS = [['/plan', '✅ Tasks'], ['/deadlines', '⏳ Deadlines']];
 
 export default function PlanTabs({ active }) {
   return (

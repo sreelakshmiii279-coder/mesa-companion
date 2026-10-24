@@ -22,13 +22,13 @@ export default function Timeline({ items, day, now = new Date() }) {
       <li key={it.key}>
         <div className="time">{fmtTime(it.start)}</div>
         <div className={`item ${it.type}${it.done ? ' done' : ''}${isNow ? ' now' : ''}`}>
-          <div className="bubble">{it.type === 'class' ? '📚' : it.type === 'chore' ? '🏠' : '⚡'}</div>
+          <div className="bubble">{it.emoji}</div>
           <div className="grow">
             <div className="t">{it.title}</div>
             <div className="d">
               {fmtTime(it.start)}–{fmtTime(it.end)}
               {it.detail ? ` · ${it.detail}` : ''}
-              {it.type === 'chore' ? ' · chore' : ''}
+              {it.type === 'chore' ? ' · auto-slotted' : ''}{it.priority === 'high' ? ' · 🔴 high' : ''}
               {it.repeat && it.repeat !== 'none' ? ` · ${it.repeat}` : ''}
             </div>
           </div>
