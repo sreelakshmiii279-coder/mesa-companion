@@ -8,6 +8,7 @@ import { addItem, updateItem, deleteItem, moveToTomorrow, toggleChore, reschedul
 import Timeline from '@/components/Timeline';
 import PlanTabs from '@/components/PlanTabs';
 import ItemFields from '@/components/ItemFields';
+import SubmitButton from '@/components/SubmitButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,7 +66,7 @@ export default async function Tasks({ searchParams }) {
 
       <form action={addItem} className="card stack">
         <ItemFields item={{ start: day === today ? nextSlot : '09:00', day }} today={today} />
-        <button className="btn block">Add task</button>
+        <SubmitButton className="btn block" pendingText="Adding & re-planning…">Add task</SubmitButton>
       </form>
 
       {leftover.length > 0 && (
@@ -115,8 +116,8 @@ export default async function Tasks({ searchParams }) {
                   <input type="hidden" name="kind" value={t.kind} />
                   <ItemFields item={t.fields} today={today} />
                   <div className="grid2">
-                    <button className="btn">Save</button>
-                    <button className="btn ghost" formAction={deleteItem}>Delete</button>
+                    <SubmitButton pendingText="Saving…">Save</SubmitButton>
+                    <SubmitButton className="btn ghost" formAction={deleteItem} pendingText="Deleting…">Delete</SubmitButton>
                   </div>
                 </form>
               </details>
