@@ -3,6 +3,7 @@ import { sql, getMeta } from '@/lib/db';
 import { fmtRelative } from '@/lib/time';
 import { PORTAL_ASSIGNMENTS } from '@/lib/lms';
 import DueList from '@/components/DueList';
+import { allDue } from '@/lib/planner';
 import SyncButton from '@/components/SyncButton';
 import PlanTabs from '@/components/PlanTabs';
 
@@ -11,7 +12,7 @@ export const dynamic = 'force-dynamic';
 export default async function Deadlines() {
   await requireAuth();
   const [pending, finished, lastSync] = await Promise.all([
-    sql`SELECT * FROM assignments WHERE NOT submitted AND NOT marked_done AND due_at > now() ORDER BY due_at`,
+    allDue(),
     sql`SELECT * FROM assignments WHERE submitted OR marked_done OR due_at <= now() ORDER BY due_at DESC NULLS LAST LIMIT 40`,
     getMeta('last_sync'),
   ]);
@@ -20,7 +21,7 @@ export default async function Deadlines() {
       <h1>Deadlines</h1>
       <PlanTabs active="/deadlines" />
       <p className="sub">
-        Reminders go out 3 days, 1 day, 3 hours and 1 hour before. Tick one off to stop its reminders.
+        Portal assignments plus your own tasks with a done-by date. Reminders go out 3 days, 1 day, 3 hours and 1 hour before. Tick one off to stop its reminders.
         {lastSync && <> Synced {fmtRelative(new Date(Number(lastSync)))}.</>}
       </p>
       <div className="row" style={{ gap: 8 }}>

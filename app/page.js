@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { requireAuth } from '@/lib/auth';
 import { sql } from '@/lib/db';
-import { timeline, pendingAssignments } from '@/lib/planner';
+import { timeline, allDue } from '@/lib/planner';
 import { istDay, fmtDay, fmtTime } from '@/lib/time';
 import Timeline from '@/components/Timeline';
 import DueList from '@/components/DueList';
@@ -22,7 +22,7 @@ export default async function Today() {
   const day = istDay(now);
   const [items, pending, [prereads]] = await Promise.all([
     timeline(day),
-    pendingAssignments(),
+    allDue(),
     sql`SELECT count(*)::int AS n FROM readings WHERE kind = 'pre' AND NOT is_read`,
   ]);
   const open = items.filter((i) => !i.done);
