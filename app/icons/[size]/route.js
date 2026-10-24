@@ -12,7 +12,7 @@ export async function GET(_req, { params }) {
     (
       <div style={{
         width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: '#c2410c', color: '#fff', fontSize: size * 0.56, fontWeight: 800, fontFamily: 'sans-serif',
+        background: '#059669', color: '#fff', fontSize: size * 0.56, fontWeight: 800, fontFamily: 'sans-serif',
       }}>
         M
       </div>

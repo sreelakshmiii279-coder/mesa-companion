@@ -13,7 +13,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Sync portal and send due reminders
-        run: curl -fsS -m 120 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" "${{ secrets.APP_URL }}/api/cron"
+        run: |
+          curl -fsS -m 120 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" "${{ secrets.APP_URL }}/api/cron"
 
   notes:
     if: github.event.schedule == '7,37 * * * *' || github.event_name == 'workflow_dispatch'
@@ -21,4 +22,5 @@ jobs:
     timeout-minutes: 8
     steps:
       - name: Write notes for one new recording (1-3 min)
-        run: curl -sS -m 310 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" "${{ secrets.APP_URL }}/api/cron/notes"
+        run: |
+          curl -sS -m 310 -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" "${{ secrets.APP_URL }}/api/cron/notes"

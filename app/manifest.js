@@ -5,8 +5,8 @@ export default function manifest() {
     description: 'Deadlines, class notes and a day planner for Term 2.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#f6f5f2',
-    theme_color: '#c2410c',
+    background_color: '#060b12',
+    theme_color: '#059669',
     icons: [
       { src: '/icons/192', sizes: '192x192', type: 'image/png' },
       { src: '/icons/512', sizes: '512x512', type: 'image/png' },
