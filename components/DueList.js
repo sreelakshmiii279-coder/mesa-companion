@@ -13,7 +13,7 @@ export default function DueList({ items, showToggle = true }) {
       {items.map((a) => {
         const done = a.submitted || a.marked_done;
         return (
-          <div key={a.id} className="card row" style={done ? { opacity: 0.55 } : undefined}>
+          <div key={a.id} className={`card row due-card ${!done && a.due_at ? urgency(a.due_at) : ''}`} style={done ? { opacity: 0.55 } : undefined}>
             <div className="grow">
               <div style={{ fontWeight: 600 }}>{a.title}</div>
               <div className="muted small">

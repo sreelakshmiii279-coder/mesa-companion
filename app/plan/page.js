@@ -65,7 +65,7 @@ export default async function Plan({ searchParams }) {
 
       {leftover.length > 0 && (
         <>
-          <h2>Not done yet</h2>
+          <h2>⏰ Not done yet</h2>
           <div className="stack">
             {leftover.map((t) => (
               <div key={t.key} className="card row">
@@ -91,7 +91,7 @@ export default async function Plan({ searchParams }) {
 
       {repeating.length > 0 && (
         <>
-          <h2>Repeating tasks</h2>
+          <h2>🔁 Repeating tasks</h2>
           <div className="stack">
             {repeating.map((t) => (
               <div key={t.id} className="card row">

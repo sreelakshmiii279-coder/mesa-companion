@@ -6,6 +6,16 @@ import NewsRefresh from '@/components/NewsRefresh';
 
 export const dynamic = 'force-dynamic';
 
+const C = (a, b) => ({ '--cat': `linear-gradient(90deg, ${a}, ${b})`, '--catc': a });
+const CAT_STYLE = {
+  World: C('#3b82f6', '#06b6d4'), Markets: C('#10b981', '#a3e635'), Business: C('#f59e0b', '#fbbf24'),
+  India: C('#f97316', '#22c55e'), 'Policy & Law': C('#8b5cf6', '#6366f1'), 'Tech & AI': C('#06b6d4', '#3b82f6'),
+  Startups: C('#ec4899', '#f97316'),
+};
+const CAT_EMOJI = {
+  World: '🌍', Markets: '📈', Business: '💼', India: '🇮🇳', 'Policy & Law': '⚖️', 'Tech & AI': '🤖', Startups: '🚀',
+};
+
 export default async function News({ searchParams }) {
   await requireAuth();
   const cat = (await searchParams).c;
@@ -30,9 +40,9 @@ export default async function News({ searchParams }) {
       {!items.length && <div className="card empty">Putting together your first briefing… this takes about 20 seconds.</div>}
       <div className="stack">
         {shown.map((s, i) => (
-          <a key={i} href={s.url} target="_blank" rel="noreferrer" className="card story">
+          <a key={i} href={s.url} target="_blank" rel="noreferrer" className="card story" style={CAT_STYLE[s.category]}>
             <div className="row between">
-              <span className="cat grad-text">{s.category}</span>
+              <span className="cat">{CAT_EMOJI[s.category]} {s.category}</span>
               <span className="small muted">{s.source}</span>
             </div>
             <div className="h">{s.headline}</div>

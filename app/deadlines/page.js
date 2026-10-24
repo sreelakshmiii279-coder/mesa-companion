@@ -27,7 +27,7 @@ export default async function Deadlines() {
         <SyncButton />
         <a className="btn small ghost" href={PORTAL_ASSIGNMENTS} target="_blank" rel="noreferrer">Open portal ↗</a>
       </div>
-      <h2>To do · {pending.length}</h2>
+      <h2>🎯 To do · {pending.length}</h2>
       <DueList items={pending} />
       <details>
         <summary>Done and past ({finished.length})</summary>

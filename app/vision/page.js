@@ -28,7 +28,7 @@ export default async function Vision() {
         <div className="v">{future?.text ?? 'Write who you are becoming below.'}</div>
       </div>
 
-      <h2>I am</h2>
+      <h2>✨ I am</h2>
       <div className="mosaic">
         {identity.map((v, i) => (
           <div key={v.id} className="tile" style={i % 3 === 0 ? { background: 'var(--class-soft)' } : i % 3 === 1 ? { background: 'var(--task-soft)' } : { background: 'var(--chore-soft)' }}>
@@ -45,7 +45,7 @@ export default async function Vision() {
         ))}
       </div>
 
-      <h2>Goals</h2>
+      <h2>🎯 Goals</h2>
       <div className="stack">
         {goals.map((v) => (
           <div key={v.id} className="card row">
@@ -56,7 +56,7 @@ export default async function Vision() {
         ))}
       </div>
 
-      <h2>Add to your board</h2>
+      <h2>➕ Add to your board</h2>
       <form action={addVision} className="card stack">
         <label className="field">Type
           <select name="kind" defaultValue="identity">

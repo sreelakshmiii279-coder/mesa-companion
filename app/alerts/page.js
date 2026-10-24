@@ -17,7 +17,7 @@ export default async function Alerts() {
       <p className="sub">Everything the app has reminded you about.</p>
       <PushSetup vapidKey={process.env.VAPID_PUBLIC_KEY} />
       <div className="row between">
-        <h2>Recent</h2>
+        <h2>🔔 Recent</h2>
         {unread > 0 && <form action={markAllRead} className="inline"><button className="btn small ghost">Mark all read</button></form>}
       </div>
       {!list.length && <div className="card empty">No alerts yet. New assignments, deadlines and planner reminders show up here.</div>}

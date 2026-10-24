@@ -53,7 +53,6 @@ export default function Welcome() {
           <div className="glass"><div className="k">From future you</div>{m.futureSelf}</div>
           {future && <div className="glass"><div className="k">Who I'm becoming</div>{future.text}</div>}
           <div className="glass"><div className="k">Today's one thing</div>{m.focus}</div>
-          <div className="glass" style={{ fontStyle: 'italic' }}>“{m.quote}”<div className="small" style={{ fontStyle: 'normal', opacity: 0.8, marginTop: 6 }}>— {m.author}</div></div>
           <button className="go" onClick={closeMorning}>Let's go →</button>
         </div>
       </div>
@@ -75,7 +74,7 @@ export default function Welcome() {
           <div className="stack" style={{ marginTop: 14 }}>
             {news.items.slice(0, 4).map((s, i) => (
               <div key={i} className="card story">
-                <div className="cat grad-text">{s.category}</div>
+                <div className="cat">{s.category}</div>
                 <div className="h">{s.headline}</div>
                 <div className="small muted">{s.summary}</div>
               </div>

@@ -49,6 +49,7 @@ export default function Shell({ children }) {
 
   return (
     <>
+      <div className="aurora" aria-hidden="true"><span /><span /><span /></div>
       <Welcome />
       <div className="toasts">
         {toasts.map((t) => (

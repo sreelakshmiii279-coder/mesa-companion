@@ -44,7 +44,7 @@ export default async function Chores() {
         <button className="btn block">Find me a slot ✨</button>
       </form>
 
-      <h2>Up next · {open.length}</h2>
+      <h2>🏠 Up next · {open.length}</h2>
       {!open.length && <div className="card empty">Nothing pending. Look at you. 🫶</div>}
       <div className="stack">
         {open.map((c) => (
