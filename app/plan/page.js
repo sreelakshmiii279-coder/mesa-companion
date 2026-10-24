@@ -33,7 +33,7 @@ export default async function Tasks({ searchParams }) {
     sql`SELECT id, title, day::text AS day, start_time::text AS start_time, duration_min, repeat, category, priority
         FROM tasks WHERE repeat <> 'none' OR day >= ${today} ORDER BY day, start_time`,
     sql`SELECT *, due_day::text AS due_day FROM chores WHERE NOT done ORDER BY slot_start NULLS LAST`,
-    sql`SELECT * FROM chores WHERE done ORDER BY created_at DESC LIMIT 15`,
+    sql`SELECT * FROM chores WHERE done AND NOT hidden ORDER BY created_at DESC LIMIT 15`,
   ]);
   const now = new Date();
   const leftover = day === today ? items.filter((i) => i.type === 'task' && !i.done && i.repeat === 'none' && i.end < now) : [];
@@ -47,7 +47,7 @@ export default async function Tasks({ searchParams }) {
   const all = [
     ...flex.map((c) => ({
       kind: 'chore', id: c.id, title: c.title, priority: c.priority, emoji: emojiFor(c), sortTime: c.slot_start ? new Date(c.slot_start) : now,
-      meta: `${c.slot_start ? when(c.slot_start) : 'finding a slot…'} · ${c.est_min} min · auto-slotted${c.due_day ? ` · by ${fmtDay(c.due_day + 'T12:00:00+05:30')}` : ''}`,
+      meta: `${c.slot_start ? when(c.slot_start) : 'finding a slot…'} · ${c.est_min} min · ${c.assignment_id ? `from portal · due ${when(c.due_at)}` : `auto-slotted${c.due_day ? ` · by ${fmtDay(c.due_day + 'T12:00:00+05:30')}` : ''}`}`,
       fields: { mode: 'flex', title: c.title, category: c.category, priority: c.priority, minutes: c.est_min, due: c.due_day },
     })),
     ...fixed.map((t) => ({

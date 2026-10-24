@@ -132,3 +132,9 @@ ALTER TABLE chores ADD COLUMN IF NOT EXISTS category text NOT NULL DEFAULT 'hous
 ALTER TABLE chores ADD COLUMN IF NOT EXISTS priority text NOT NULL DEFAULT 'medium';
 -- "Later" on an auto-slotted task: don't place it before this time.
 ALTER TABLE chores ADD COLUMN IF NOT EXISTS not_before timestamptz;
+
+-- Tasks created automatically from portal assignments.
+ALTER TABLE chores ADD COLUMN IF NOT EXISTS assignment_id text UNIQUE;
+ALTER TABLE chores ADD COLUMN IF NOT EXISTS due_at timestamptz;          -- exact deadline (slot must end before it)
+ALTER TABLE chores ADD COLUMN IF NOT EXISTS auto_priority boolean NOT NULL DEFAULT false;  -- priority follows urgency until you change it
+ALTER TABLE chores ADD COLUMN IF NOT EXISTS hidden boolean NOT NULL DEFAULT false;         -- you deleted an auto task: keep it gone

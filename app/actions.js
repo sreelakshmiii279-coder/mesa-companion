@@ -54,8 +54,12 @@ export async function updateItem(form) {
   if (!id || !it.title) return;
   const sameKind = (kind === 'chore') === (it.mode === 'flex');
   if (!sameKind) {
-    if (kind === 'chore') await sql`DELETE FROM chores WHERE id = ${id}`;
-    else await sql`DELETE FROM tasks WHERE id = ${id}`;
+    if (kind === 'chore') {
+      await sql`UPDATE chores SET hidden = true, done = true WHERE id = ${id} AND assignment_id IS NOT NULL`;
+      await sql`DELETE FROM chores WHERE id = ${id} AND assignment_id IS NULL`;
+    } else {
+      await sql`DELETE FROM tasks WHERE id = ${id}`;
+    }
     await insertItem(it);
   } else if (kind === 'task') {
     if (!/^\d{2}:\d{2}$/.test(it.start) || !isDay(it.day)) return;
@@ -63,8 +67,10 @@ export async function updateItem(form) {
               repeat = ${it.repeat}, category = ${it.category}, priority = ${it.priority} WHERE id = ${id}`;
     await scheduleChores(new Date(), { replan: true });
   } else {
-    await sql`UPDATE chores SET title = ${it.title}, est_min = ${it.minutes}, due_day = ${it.due},
-              category = ${it.category}, priority = ${it.priority} WHERE id = ${id}`;
+    await sql`UPDATE chores SET title = ${it.title}, est_min = ${it.minutes},
+              due_day = CASE WHEN assignment_id IS NULL THEN ${it.due}::date ELSE due_day END,
+              category = ${it.category}, auto_priority = auto_priority AND priority = ${it.priority},
+              priority = ${it.priority} WHERE id = ${id}`;
     await scheduleChores(new Date(), { replan: true });
   }
   revalidatePath('/', 'layout');
@@ -73,8 +79,12 @@ export async function updateItem(form) {
 export async function deleteItem(form) {
   await requireAuth();
   const id = Number(form.get('id'));
-  if (form.get('kind') === 'chore') await sql`DELETE FROM chores WHERE id = ${id}`;
-  else await sql`DELETE FROM tasks WHERE id = ${id}`;
+  if (form.get('kind') === 'chore') {
+    await sql`UPDATE chores SET hidden = true, done = true WHERE id = ${id} AND assignment_id IS NOT NULL`;
+    await sql`DELETE FROM chores WHERE id = ${id} AND assignment_id IS NULL`;
+  } else {
+    await sql`DELETE FROM tasks WHERE id = ${id}`;
+  }
   await scheduleChores(new Date(), { replan: true });
   revalidatePath('/', 'layout');
 }
@@ -97,7 +107,10 @@ export async function moveToTomorrow(form) {
 
 export async function toggleAssignment(form) {
   await requireAuth();
-  await sql`UPDATE assignments SET marked_done = NOT marked_done WHERE id = ${String(form.get('id'))}`;
+  const id = String(form.get('id'));
+  const [a] = await sql`UPDATE assignments SET marked_done = NOT marked_done WHERE id = ${id} RETURNING marked_done`;
+  if (a) await sql`UPDATE chores SET done = ${a.marked_done} WHERE assignment_id = ${id} AND NOT hidden`;
+  await scheduleChores(new Date(), { replan: true });
   revalidatePath('/', 'layout');
 }
 
