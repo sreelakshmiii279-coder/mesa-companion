@@ -2,10 +2,34 @@ import { requireAuth } from '@/lib/auth';
 import { sql } from '@/lib/db';
 import { istDay, fmtTime, fmtDay } from '@/lib/time';
 import { choreEmoji } from '@/lib/chores';
-import { addChore, toggleChore, rescheduleChore, deleteChore } from '@/app/actions';
+import { addChore, updateChore, toggleChore, rescheduleChore, deleteChore } from '@/app/actions';
 import PlanTabs from '@/components/PlanTabs';
 
 export const dynamic = 'force-dynamic';
+
+const LENGTHS = [10, 15, 20, 30, 45, 60, 90];
+
+/** Fields shared by the "add chore" and "edit chore" forms. */
+function ChoreFields({ chore = {} }) {
+  const lengths = [...new Set([...LENGTHS, chore.est_min ?? 20])].sort((a, b) => a - b);
+  return (
+    <>
+      <label className="field">What needs doing
+        <input name="title" required maxLength={120} defaultValue={chore.title} placeholder="Laundry, groceries, pay electricity bill…" />
+      </label>
+      <div className="grid2">
+        <label className="field">Takes about
+          <select name="est_min" defaultValue={String(chore.est_min ?? 20)}>
+            {lengths.map((m) => <option key={m} value={m}>{m < 60 ? `${m} min` : `${+(m / 60).toFixed(1)} hr${m > 60 ? 's' : ''}`}</option>)}
+          </select>
+        </label>
+        <label className="field">Done by (optional)
+          <input type="date" name="due_day" defaultValue={chore.due_day ?? ''} min={istDay()} />
+        </label>
+      </div>
+    </>
+  );
+}
 
 function when(slot) {
   if (!slot) return 'finding a slot…';
@@ -28,19 +52,7 @@ export default async function Chores() {
       <PlanTabs active="/chores" />
 
       <form action={addChore} className="card stack">
-        <label className="field">What needs doing
-          <input name="title" required maxLength={120} placeholder="Laundry, groceries, pay electricity bill…" />
-        </label>
-        <div className="grid2">
-          <label className="field">Takes about
-            <select name="est_min" defaultValue="20">
-              {[10, 15, 20, 30, 45, 60, 90].map((m) => <option key={m} value={m}>{m < 60 ? `${m} min` : `${m / 60} hr${m > 60 ? 's' : ''}`}</option>)}
-            </select>
-          </label>
-          <label className="field">Done by (optional)
-            <input type="date" name="due_day" min={istDay()} />
-          </label>
-        </div>
+        <ChoreFields />
         <button className="btn block">Find me a slot ✨</button>
       </form>
 
@@ -48,25 +60,38 @@ export default async function Chores() {
       {!open.length && <div className="card empty">Nothing pending. Look at you. 🫶</div>}
       <div className="stack">
         {open.map((c) => (
-          <div key={c.id} className="card row">
-            <div style={{ fontSize: 24 }}>{choreEmoji(c.title)}</div>
-            <div className="grow">
-              <div style={{ fontWeight: 600 }}>{c.title}</div>
-              <div className="muted small">
-                {when(c.slot_start)} · {c.est_min} min{c.due_day ? ` · by ${fmtDay(c.due_day + 'T12:00:00+05:30')}` : ''}
-                {c.moves > 0 ? ` · moved ${c.moves}×` : ''}
+          <div key={c.id} className="card">
+            <div className="row">
+              <div style={{ fontSize: 24 }}>{choreEmoji(c.title)}</div>
+              <div className="grow">
+                <div style={{ fontWeight: 600 }}>{c.title}</div>
+                <div className="muted small">
+                  {when(c.slot_start)} · {c.est_min} min{c.due_day ? ` · by ${fmtDay(c.due_day + 'T12:00:00+05:30')}` : ''}
+                  {c.moves > 0 ? ` · moved ${c.moves}×` : ''}
+                </div>
               </div>
+              <form action={rescheduleChore} className="inline">
+                <input type="hidden" name="id" value={c.id} />
+                <button className="btn small ghost" title="Find a later slot">Later</button>
+              </form>
+              <form action={toggleChore} className="inline">
+                <input type="hidden" name="id" value={c.id} />
+                <button className="icon-btn" aria-label="Done">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2"><path d="m5 12 5 5L20 7" /></svg>
+                </button>
+              </form>
             </div>
-            <form action={rescheduleChore} className="inline">
-              <input type="hidden" name="id" value={c.id} />
-              <button className="btn small ghost" title="Find a later slot">Later</button>
-            </form>
-            <form action={toggleChore} className="inline">
-              <input type="hidden" name="id" value={c.id} />
-              <button className="icon-btn" aria-label="Done">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2"><path d="m5 12 5 5L20 7" /></svg>
-              </button>
-            </form>
+            <details className="edit">
+              <summary>Edit</summary>
+              <form action={updateChore} className="stack">
+                <input type="hidden" name="id" value={c.id} />
+                <ChoreFields chore={c} />
+                <div className="grid2">
+                  <button className="btn">Save</button>
+                  <button className="btn ghost" formAction={deleteChore}>Delete</button>
+                </div>
+              </form>
+            </details>
           </div>
         ))}
       </div>

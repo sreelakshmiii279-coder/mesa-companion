@@ -20,6 +20,23 @@ export async function addTask(form) {
   revalidatePath('/', 'layout');
 }
 
+export async function updateTask(form) {
+  await requireAuth();
+  const id = Number(form.get('id'));
+  const title = String(form.get('title') ?? '').trim().slice(0, 120);
+  const day = String(form.get('day') ?? '');
+  const start = String(form.get('start') ?? '');
+  const duration = Math.min(720, Math.max(5, Number(form.get('duration')) || 30));
+  const repeat = REPEATS.includes(form.get('repeat')) ? form.get('repeat') : 'none';
+  if (!id || !title || !/^\d{2}:\d{2}/.test(start) || !/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
+  await sql`UPDATE tasks SET title = ${title}, day = ${day}, start_time = ${start.slice(0, 5)},
+            duration_min = ${duration}, repeat = ${repeat} WHERE id = ${id}`;
+  // Chores may have been sitting in the slot this task now takes.
+  await sql`UPDATE chores SET slot_start = NULL WHERE NOT done AND slot_start > now()`;
+  await scheduleChores();
+  revalidatePath('/', 'layout');
+}
+
 export async function deleteTask(form) {
   await requireAuth();
   await sql`DELETE FROM tasks WHERE id = ${Number(form.get('id'))}`;
@@ -60,6 +77,20 @@ export async function addChore(form) {
   revalidatePath('/', 'layout');
 }
 
+/** Edit a chore; it gets a fresh slot that fits the new length / due date. */
+export async function updateChore(form) {
+  await requireAuth();
+  const id = Number(form.get('id'));
+  const title = String(form.get('title') ?? '').trim().slice(0, 120);
+  const est = Math.min(240, Math.max(5, Number(form.get('est_min')) || 20));
+  const due = String(form.get('due_day') ?? '');
+  if (!id || !title) return;
+  await sql`UPDATE chores SET title = ${title}, est_min = ${est},
+            due_day = ${/^\d{4}-\d{2}-\d{2}$/.test(due) ? due : null}, slot_start = NULL WHERE id = ${id}`;
+  await scheduleChores();
+  revalidatePath('/', 'layout');
+}
+
 export async function toggleChore(form) {
   await requireAuth();
   await sql`UPDATE chores SET done = NOT done WHERE id = ${Number(form.get('id'))}`;
@@ -84,29 +115,6 @@ export async function toggleReadingRead(form) {
   await requireAuth();
   await sql`UPDATE readings SET is_read = NOT is_read WHERE id = ${String(form.get('id'))}`;
   revalidatePath('/', 'layout');
-}
-
-const VISION_KINDS = ['future', 'identity', 'goal', 'image'];
-
-export async function addVision(form) {
-  await requireAuth();
-  const kind = VISION_KINDS.includes(form.get('kind')) ? form.get('kind') : 'identity';
-  const text = String(form.get('text') ?? '').trim().slice(0, 300) || null;
-  const image = String(form.get('image_url') ?? '').trim();
-  const imageUrl = /^https:\/\/\S+$/.test(image) ? image.slice(0, 1000) : null;
-  if (!text && !imageUrl) return;
-  if (kind === 'future') await sql`DELETE FROM vision WHERE kind = 'future'`;
-  await sql`INSERT INTO vision (kind, text, image_url, sort)
-            VALUES (${kind}, ${text}, ${imageUrl}, (SELECT coalesce(max(sort), 0) + 1 FROM vision))`;
-  // Tomorrow's morning message will use the new vision; regenerate today's too.
-  await sql`DELETE FROM meta WHERE key = ${`motivation:${istDay()}`}`;
-  revalidatePath('/vision');
-}
-
-export async function deleteVision(form) {
-  await requireAuth();
-  await sql`DELETE FROM vision WHERE id = ${Number(form.get('id'))}`;
-  revalidatePath('/vision');
 }
 
 export async function markAllRead() {

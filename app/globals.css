@@ -315,3 +315,11 @@ h2 { font-size: 19px; text-transform: none; letter-spacing: -0.02em; color: var(
 /* Learn: coloured doc icons */
 .doc-icon { background: var(--grad); color: #fff; box-shadow: 0 6px 16px rgba(6,182,212,0.3); }
 .ring-row h1 { font-size: 28px; white-space: nowrap; }
+
+/* Inline edit panels */
+details.edit { margin-top: 8px; }
+details.edit summary { list-style: none; display: inline-block; font-size: 13px; font-weight: 600; color: var(--accent); margin: 0; padding: 4px 0; }
+details.edit summary::-webkit-details-marker { display: none; }
+details.edit summary::before { content: '✏️ '; }
+details.edit[open] summary { margin-bottom: 10px; }
+details.edit[open] summary::after { content: ' · close'; color: var(--muted); font-weight: 500; }

@@ -2,9 +2,10 @@ import { requireAuth } from '@/lib/auth';
 import { sql } from '@/lib/db';
 import { timeline } from '@/lib/planner';
 import { istDay, istHHMM, addDays, fmtDay, fmtTime } from '@/lib/time';
-import { addTask, deleteTask, moveToTomorrow } from '@/app/actions';
+import { addTask, updateTask, deleteTask, moveToTomorrow } from '@/app/actions';
 import Timeline from '@/components/Timeline';
 import PlanTabs from '@/components/PlanTabs';
+import TaskFields from '@/components/TaskFields';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,10 +18,23 @@ export default async function Plan({ searchParams }) {
   const day = /^\d{4}-\d{2}-\d{2}$/.test(q ?? '') ? q : today;
   const [items, repeating] = await Promise.all([
     timeline(day),
-    sql`SELECT * FROM tasks WHERE repeat <> 'none' ORDER BY start_time`,
+    sql`SELECT id, title, day::text AS day, start_time::text AS start_time, duration_min, repeat
+        FROM tasks WHERE repeat <> 'none' ORDER BY start_time`,
   ]);
   const now = new Date();
   const leftover = day === today ? items.filter((i) => i.type === 'task' && !i.done && i.repeat === 'none' && i.end < now) : [];
+  // Everything you can edit on this page: that day's one-off tasks, then repeating ones.
+  const mine = [
+    ...items.filter((i) => i.type === 'task' && i.repeat === 'none').map((t) => ({
+      key: t.key, id: t.id, title: t.title, meta: `${fmtTime(t.start)}–${fmtTime(t.end)}`,
+      fields: { title: t.title, day, start: istHHMM(t.start), duration: Math.round((t.end - t.start) / 60_000), repeat: 'none' },
+    })),
+    ...repeating.map((t) => ({
+      key: `r${t.id}`, id: t.id, title: t.title,
+      meta: `${REPEAT_LABEL[t.repeat]} · ${t.start_time.slice(0, 5)} · ${t.duration_min} min`,
+      fields: { title: t.title, day: t.day, start: t.start_time.slice(0, 5), duration: t.duration_min, repeat: t.repeat },
+    })),
+  ];
   // Default the new task to the next half hour.
   const nextSlot = (() => {
     const [h, m] = istHHMM(now).split(':').map(Number);
@@ -35,31 +49,7 @@ export default async function Plan({ searchParams }) {
       <PlanTabs active="/plan" />
 
       <form action={addTask} className="card stack">
-        <label className="field">What
-          <input name="title" required placeholder="Gym, cook dinner, finish SQL workbook…" maxLength={120} />
-        </label>
-        <div className="grid2">
-          <label className="field">Day
-            <input type="date" name="day" defaultValue={day} min={today} required />
-          </label>
-          <label className="field">Start
-            <input type="time" name="start" defaultValue={day === today ? nextSlot : '09:00'} required />
-          </label>
-        </div>
-        <div className="grid2">
-          <label className="field">How long
-            <select name="duration" defaultValue="60">
-              {[15, 30, 45, 60, 90, 120, 180].map((m) => <option key={m} value={m}>{m < 60 ? `${m} min` : `${m / 60} hr${m > 60 ? 's' : ''}`}</option>)}
-            </select>
-          </label>
-          <label className="field">Repeat
-            <select name="repeat" defaultValue="none">
-              <option value="none">Just once</option>
-              <option value="daily">Every day</option>
-              <option value="weekdays">Weekdays</option>
-            </select>
-          </label>
-        </div>
+        <TaskFields task={{ day, start: day === today ? nextSlot : '09:00' }} minDay={today} />
         <button className="btn block">Add to plan</button>
       </form>
 
@@ -89,37 +79,30 @@ export default async function Plan({ searchParams }) {
       </div>
       <Timeline items={items} day={day} />
 
-      {repeating.length > 0 && (
+      {mine.length > 0 && (
         <>
-          <h2>🔁 Repeating tasks</h2>
+          <h2>✏️ Your tasks</h2>
           <div className="stack">
-            {repeating.map((t) => (
-              <div key={t.id} className="card row">
-                <div className="grow">
-                  <b>{t.title}</b>
-                  <div className="muted small">{REPEAT_LABEL[t.repeat]} · {String(t.start_time).slice(0, 5)} · {t.duration_min} min</div>
+            {mine.map((t) => (
+              <div key={t.key} className="card">
+                <div className="row">
+                  <div className="grow">
+                    <b>{t.title}</b>
+                    <div className="muted small">{t.meta}</div>
+                  </div>
+                  <form action={deleteTask} className="inline">
+                    <input type="hidden" name="id" value={t.id} />
+                    <button className="btn small ghost">Delete</button>
+                  </form>
                 </div>
-                <form action={deleteTask} className="inline">
-                  <input type="hidden" name="id" value={t.id} />
-                  <button className="btn small ghost">Delete</button>
-                </form>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-
-      {items.some((i) => i.type === 'task' && i.repeat === 'none') && (
-        <>
-          <h2>Remove a task</h2>
-          <div className="stack">
-            {items.filter((i) => i.type === 'task' && i.repeat === 'none').map((t) => (
-              <div key={t.key} className="card row">
-                <div className="grow"><b>{t.title}</b><div className="muted small">{fmtTime(t.start)}–{fmtTime(t.end)}</div></div>
-                <form action={deleteTask} className="inline">
-                  <input type="hidden" name="id" value={t.id} />
-                  <button className="btn small ghost">Delete</button>
-                </form>
+                <details className="edit">
+                  <summary>Edit</summary>
+                  <form action={updateTask} className="stack">
+                    <input type="hidden" name="id" value={t.id} />
+                    <TaskFields task={t.fields} />
+                    <button className="btn block">Save changes</button>
+                  </form>
+                </details>
               </div>
             ))}
           </div>

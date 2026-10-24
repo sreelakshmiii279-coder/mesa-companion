@@ -42,8 +42,7 @@ export default function Welcome() {
   }
 
   if (step === 'morning' && morning) {
-    const { message: m, vision } = morning;
-    const future = vision.find((v) => v.kind === 'future');
+    const { message: m } = morning;
     const hello = istNow().getUTCHours() < 12 ? 'Good morning' : 'Hey';
     return (
       <div className="morning" role="dialog" aria-label="Morning">
@@ -51,7 +50,6 @@ export default function Welcome() {
           <div className="hello">{hello} ☀️ {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
           <div className="aff">{m.affirmation}</div>
           <div className="glass"><div className="k">From future you</div>{m.futureSelf}</div>
-          {future && <div className="glass"><div className="k">Who I'm becoming</div>{future.text}</div>}
           <div className="glass"><div className="k">Today's one thing</div>{m.focus}</div>
           <button className="go" onClick={closeMorning}>Let's go →</button>
         </div>
