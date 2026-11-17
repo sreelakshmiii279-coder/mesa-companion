@@ -138,3 +138,13 @@ ALTER TABLE chores ADD COLUMN IF NOT EXISTS assignment_id text UNIQUE;
 ALTER TABLE chores ADD COLUMN IF NOT EXISTS due_at timestamptz;          -- exact deadline (slot must end before it)
 ALTER TABLE chores ADD COLUMN IF NOT EXISTS auto_priority boolean NOT NULL DEFAULT false;  -- priority follows urgency until you change it
 ALTER TABLE chores ADD COLUMN IF NOT EXISTS hidden boolean NOT NULL DEFAULT false;         -- you deleted an auto task: keep it gone
+
+-- Interactive study guides, one per course session, built from decks, pre-reads and recording notes.
+CREATE TABLE IF NOT EXISTS study_guides (
+  course     text NOT NULL,
+  session    int  NOT NULL,
+  guide      jsonb NOT NULL,
+  sources    jsonb NOT NULL,
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (course, session)
+);

@@ -350,3 +350,74 @@ h1 { background: linear-gradient(135deg, var(--text) 30%, #ec4899); -webkit-back
 /* Keep date/time inputs inside their grid cell on phones */
 .grid2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 .field input, .field select { min-width: 0; max-width: 100%; }
+
+/* ---------- Study guide (desktop-first) ---------- */
+.page:has(.study-layout) { max-width: 1240px; padding-bottom: 60px; }
+.study-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 32px; align-items: start; margin-top: 8px; }
+.study-side { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; padding-right: 4px; }
+.side-title { font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+.side-sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+.side-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.side-sessions { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+.side-session { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; padding: 9px 10px; border-radius: 12px;
+  background: var(--card); border: 1px solid var(--line); cursor: pointer; color: var(--text); font: inherit; }
+.side-session:disabled { opacity: .45; cursor: default; }
+.side-session.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.ss-n { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-weight: 700; font-size: 13px; background: var(--grad); color: #fff; flex: none; }
+.ss-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.ss-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ss-bar { height: 4px; border-radius: 2px; background: var(--card-2); overflow: hidden; }
+.ss-bar i { display: block; height: 100%; background: var(--grad); }
+.ss-p { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.side-toc { display: flex; flex-direction: column; gap: 2px; border-left: 2px solid var(--line); padding-left: 12px; }
+.side-toc .side-label { margin-bottom: 6px; }
+.side-toc a { font-size: 13px; color: var(--muted); text-decoration: none; padding: 3px 0; }
+.side-toc a:hover { color: var(--accent); }
+.study-main { min-width: 0; }
+.study-main section { scroll-margin-top: 16px; }
+.study-hero { border-radius: 24px; padding: 26px 28px; background: var(--grad); color: #fff; margin-bottom: 16px; }
+.study-hero .k { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
+.study-hero .v { font-size: 32px; margin: 6px 0 6px; color: #fff; background: none; -webkit-background-clip: initial; background-clip: initial; }
+.study-hero p { margin: 0; opacity: .92; font-size: 16px; }
+.src-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.src-chips span { font-size: 12.5px; padding: 4px 10px; border-radius: 99px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.25); }
+.goals { margin: 0; padding-left: 20px; }
+.goals li { margin: 4px 0; }
+.study-sec h2, .study-main section h2 { font-size: 21px; margin-top: 34px; }
+.sec-grid { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 14px; align-items: start; }
+.terms { display: flex; flex-direction: column; gap: 6px; }
+.term { text-align: left; font: inherit; color: var(--text); background: var(--card); border: 1px dashed var(--accent); border-radius: 12px; padding: 8px 10px; cursor: pointer; }
+.term b { font-size: 13.5px; }
+.term span { display: block; font-size: 13px; color: var(--muted); margin-top: 4px; }
+.term.open { border-style: solid; background: var(--card-2); }
+.q { margin-top: 12px; border-color: var(--accent); }
+.q-label { font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: .04em; }
+.q-text { font-weight: 600; font-size: 16px; margin-top: 4px; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.opt { display: flex; gap: 10px; align-items: flex-start; text-align: left; font: inherit; font-size: 14.5px; color: var(--text);
+  background: var(--card-2); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt:disabled { cursor: default; }
+.opt-key { width: 22px; height: 22px; flex: none; border-radius: 6px; display: grid; place-items: center; font-size: 12px; font-weight: 700; background: var(--card); border: 1px solid var(--line); }
+.opt.right { border-color: #16a34a; background: rgba(22,163,74,.12); }
+.opt.right .opt-key { background: #16a34a; color: #fff; border-color: #16a34a; }
+.opt.wrong { border-color: #e11d48; background: rgba(225,29,72,.10); }
+.opt.wrong .opt-key { background: #e11d48; color: #fff; border-color: #e11d48; }
+.opt.dim { opacity: .55; }
+.q-explain { margin-top: 12px; padding: 10px 12px; border-radius: 12px; font-size: 14.5px; }
+.q-explain.ok { background: rgba(22,163,74,.10); }
+.q-explain.no { background: rgba(225,29,72,.08); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fw { margin: 8px 0 0; padding-left: 20px; }
+.fw li { margin: 4px 0; }
+.flash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.flash { min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; text-align: left; font: inherit; color: var(--text);
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px; cursor: pointer; transition: transform .15s; }
+.flash:hover { transform: translateY(-2px); border-color: var(--accent); }
+.flash.flipped { background: var(--card-2); border-color: var(--accent); }
+.flash-side { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.flash-text { font-weight: 600; font-size: 15px; }
+.flash.flipped .flash-text { font-weight: 400; font-size: 14px; }
+.score { margin: 4px 0 12px; padding: 12px 14px; border-radius: 14px; font-size: 15px; }
+.score.good { background: rgba(22,163,74,.12); }
+.score.meh { background: rgba(217,119,6,.12); }
