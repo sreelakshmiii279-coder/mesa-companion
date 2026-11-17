@@ -38,7 +38,7 @@ function Question({ q, picked, onPick, label }) {
   );
 }
 
-export default function StudyGuide({ slug, courseName, totalSessions, guides }) {
+export default function StudyGuide({ slug, courseName, units, guides }) {
   const key = `study:${slug}`;
   const bySession = useMemo(() => Object.fromEntries(guides.map((g) => [g.session, g])), [guides]);
   const [session, setSession] = useState(guides[0]?.session ?? 1);
@@ -77,12 +77,14 @@ export default function StudyGuide({ slug, courseName, totalSessions, guides }) 
   const st = state[session] || {};
   const quizDone = g ? Object.keys(st.quiz || {}).length : 0;
   const quizScore = g ? g.quiz.reduce((n, q, i) => n + ((st.quiz || {})[i] === q.answer ? 1 : 0), 0) : 0;
-  const sessions = Array.from({ length: totalSessions }, (_, i) => i + 1);
+  const sessions = units.map((u) => u.n);
+  const labelOf = Object.fromEntries(units.map((u) => [u.n, u.label]));
   const nextSession = sessions.find((s) => s > session && bySession[s]);
 
   return (
     <div className="study-layout">
       <aside className="study-side">
+        <a href="/study" className="side-back">← All courses</a>
         <div className="side-title">{courseName}</div>
         <div className="side-sub">Interactive study guide</div>
         <nav className="side-sessions">
@@ -94,7 +96,7 @@ export default function StudyGuide({ slug, courseName, totalSessions, guides }) 
                 className={`side-session${s === session ? ' on' : ''}`}>
                 <span className="ss-n">{s}</span>
                 <span className="ss-body">
-                  <span className="ss-title">{has ? bySession[s].guide.title : 'Coming soon'}</span>
+                  <span className="ss-title">{has ? bySession[s].guide.title : labelOf[s] || 'Being prepared'}</span>
                   {has && <span className="ss-bar"><i style={{ width: `${p}%` }} /></span>}
                 </span>
                 <span className="ss-p">{has ? (p === 100 ? '✓' : `${p}%`) : ''}</span>
@@ -117,7 +119,7 @@ export default function StudyGuide({ slug, courseName, totalSessions, guides }) 
 
       <article className="study-main">
         {!g ? (
-          <div className="card empty">This session's materials aren't on Nexus yet. It'll appear here automatically.</div>
+          <div className="card empty">This session's guide is being prepared from Nexus. It'll appear here automatically.</div>
         ) : (
           <>
             <header className="study-hero">
@@ -125,9 +127,9 @@ export default function StudyGuide({ slug, courseName, totalSessions, guides }) 
               <h1 className="v">{g.title}</h1>
               <p>{g.one_line}</p>
               <div className="src-chips">
-                {entry.sources.decks.length > 0 && <span>📊 {entry.sources.decks.join(', ')}</span>}
-                {entry.sources.prereads.length > 0 && <span>📄 {entry.sources.prereads.join(', ')}</span>}
-                {entry.sources.notes_used && <span>🎥 Class recording notes</span>}
+                <span>📚 Built from {entry.sources.used ? entry.sources.used.length : 0} source{entry.sources.used?.length === 1 ? '' : 's'}</span>
+                {entry.sources.notes_used && <span>🎥 Class recording</span>}
+                {entry.sources.label && <span>{entry.sources.label}</span>}
               </div>
             </header>
 
@@ -135,6 +137,22 @@ export default function StudyGuide({ slug, courseName, totalSessions, guides }) 
               <div className="side-label" style={{ marginBottom: 6 }}>By the end you can</div>
               <ul className="goals">{g.goals.map((x, i) => <li key={i}>{x.replace(/^you will be able to\s*/i, '')}</li>)}</ul>
             </div>
+
+            {entry.sources.materials?.length > 0 && (
+              <details className="card" style={{ marginTop: 12 }}>
+                <summary style={{ margin: 0 }}>On Nexus for this session ({entry.sources.materials.length}{entry.sources.recordings?.length ? ` + ${entry.sources.recordings.length} recording` + (entry.sources.recordings.length > 1 ? 's' : '') : ''})</summary>
+                <ul className="mat-list" style={{ marginTop: 10 }}>
+                  {entry.sources.materials.map((m, i) => (
+                    <li key={i}>
+                      {m.url ? <a href={m.url} target="_blank" rel="noreferrer">{m.title}</a> : m.title}
+                      <span className="tag">{m.type === 'list' ? 'not read (data / form / link)' : m.topic}</span>
+                    </li>
+                  ))}
+                  {entry.sources.recordings?.map((r, i) => <li key={`r${i}`}>🎥 {r}<span className="tag">recording</span></li>)}
+                </ul>
+                {entry.sources.skipped?.length > 0 && <p className="small muted">Couldn't read: {entry.sources.skipped.join('; ')}</p>}
+              </details>
+            )}
 
             {g.sections.map((sec, i) => (
               <section key={i} id={`sec-${i}`} className="study-sec">

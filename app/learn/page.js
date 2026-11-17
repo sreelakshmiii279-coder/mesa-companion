@@ -21,9 +21,9 @@ export default async function Learn({ searchParams }) {
     <>
       <h1>Learn</h1>
       <p className="sub">Pre-reads, post-reads and class notes for Term 2, each with a summary for when you're short on time.</p>
-      <Link href="/study/b2b-sales" className="card row" style={{ textDecoration: 'none', marginBottom: 14 }}>
+      <Link href="/study" className="card row" style={{ textDecoration: 'none', marginBottom: 14 }}>
         <span style={{ fontSize: 26 }}>🎓</span>
-        <div className="grow"><b>B2B Sales study guide</b><div className="muted small">Sessions 1–6 from the decks, pre-reads and recordings, with questions throughout. Best on a laptop.</div></div>
+        <div className="grow"><b>Study guides for every subject</b><div className="muted small">Every session from the decks, pre-reads, resources and recordings on Nexus, with questions throughout. Best on a laptop.</div></div>
         <span className="muted">→</span>
       </Link>
       <div className="seg">

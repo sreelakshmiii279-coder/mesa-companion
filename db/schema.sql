@@ -148,3 +148,11 @@ CREATE TABLE IF NOT EXISTS study_guides (
   updated_at timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (course, session)
 );
+
+-- One row per course with a study guide: name and how its sessions are put together (the unit plan).
+CREATE TABLE IF NOT EXISTS study_courses (
+  slug       text PRIMARY KEY,
+  name       text NOT NULL,
+  plan       jsonb NOT NULL,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
