@@ -49,7 +49,7 @@ export default function Shell({ children }) {
   return (
     <>
       <div className="aurora" aria-hidden="true"><span /><span /><span /></div>
-      <Welcome />
+      {!path.startsWith("/study") && <Welcome />}  {/* no pop-ups over study pages */}
       <div className="toasts">
         {toasts.map((t) => (
           <Link key={t.id} href={t.url || '/'} className="toast" onClick={() => setToasts((x) => x.filter((y) => y.id !== t.id))}>
